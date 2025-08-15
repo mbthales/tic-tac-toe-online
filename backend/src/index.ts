@@ -1,7 +1,8 @@
-import { messageHandler } from './controllers/game'
-import { disconnectPlayer } from './services/game'
-
-import type { CloseEvent } from './types/game'
+import {
+  closeEventHandler,
+  messageHandler,
+  openEventHandler,
+} from './controllers/game'
 
 Bun.serve({
   fetch(req, server) {
@@ -11,19 +12,13 @@ Bun.serve({
   },
   websocket: {
     open(ws) {
-      ws.send('Connected successfully to the server')
+      openEventHandler(ws)
     },
     message(ws, message) {
       messageHandler(ws, message.toString())
     },
     close(ws, message) {
-      try {
-        const data = JSON.parse(message.toString()) as CloseEvent
-
-        disconnectPlayer(data, ws)
-      } catch {
-        ws.send('Invalid message format')
-      }
+      closeEventHandler(ws, message.toString())
     },
   },
   port: 3000,

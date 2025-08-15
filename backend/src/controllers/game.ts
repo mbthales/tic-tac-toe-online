@@ -1,3 +1,5 @@
+import { randomUUIDv7 } from 'bun'
+
 import { closeEventSchema, messageSchema } from '../schemas/game'
 import {
   disconnectPlayer,
@@ -30,4 +32,15 @@ export function closeEventHandler(
   if (!validatedMessage) return
 
   disconnectPlayer(validatedMessage, ws)
+}
+
+export function openEventHandler(ws: ServerWebSocket<unknown>) {
+  const playerId = randomUUIDv7()
+
+  ws.send(
+    JSON.stringify({
+      status: 'connected',
+      id: playerId,
+    })
+  )
 }
