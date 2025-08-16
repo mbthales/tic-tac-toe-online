@@ -92,7 +92,7 @@ function createMatch(
 
   matches.push(newMatch)
 
-  sendMessageToPlayers(matchId, `Player Found. Match will begin`)
+  sendMessageToPlayers(matchId, JSON.stringify({ status: 'playing' }))
 }
 
 export function playerSearch(data: Message, ws: ServerWebSocket<unknown>) {
@@ -100,6 +100,8 @@ export function playerSearch(data: Message, ws: ServerWebSocket<unknown>) {
 
   if (playersSearching.length <= 0) {
     playersSearching.push({ id: data.id, ws })
+
+    ws.send(JSON.stringify({ status: 'searching' }))
   } else {
     const adversary = playersSearching.shift()
 
