@@ -14,5 +14,6 @@
     "^[./]",
     "",
     "<TYPES>"
-  ]
+  ],
+  "vueIndentScriptAndStyle": true
 }
