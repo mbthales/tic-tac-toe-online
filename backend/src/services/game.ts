@@ -92,7 +92,10 @@ function createMatch(
 
   matches.push(newMatch)
 
-  sendMessageToPlayers(matchId, JSON.stringify({ status: 'playing' }))
+  sendMessageToPlayers(
+    matchId,
+    JSON.stringify({ status: 'playing', match: newMatch })
+  )
 }
 
 export function playerSearch(data: Message, ws: ServerWebSocket<unknown>) {
@@ -156,21 +159,28 @@ export function handlePlayerMove(data: Message, ws: ServerWebSocket<unknown>) {
       const col = Number.parseInt(colStr, 10)
 
       if (isInvalidMove(row, col, match)) {
-        ws.send('Invalid move. Play again')
+        ws.send(JSON.stringify({ status: 'playing', details: 'invalid move' }))
         return
       }
 
       const currentPlayer = match.players.o.id === data.id ? 'O' : 'X'
 
       if (currentPlayer !== match.currentPlayer) {
-        ws.send("It's not your turn")
+        ws.send(JSON.stringify({ status: 'playing', details: 'not your turn' }))
         return
       }
 
       match.board[row]![col] = currentPlayer
 
       if (isWinningMove(match, currentPlayer)) {
-        sendMessageToPlayers(match.id, `Player ${data.id} wins`)
+        sendMessageToPlayers(
+          match.id,
+          JSON.stringify({
+            status: 'finished',
+            player: currentPlayer,
+            details: 'wins',
+          })
+        )
         matches = matches.filter((m) => m.id !== match.id)
         return
       }
@@ -180,14 +190,22 @@ export function handlePlayerMove(data: Message, ws: ServerWebSocket<unknown>) {
       )
 
       if (isBoardFull) {
-        sendMessageToPlayers(match.id, "It's a tie")
+        const data = {
+          status: 'finished',
+          details: 'tie',
+        }
+        sendMessageToPlayers(match.id, JSON.stringify({ data }))
         matches = matches.filter((m) => m.id !== match.id)
         return
       }
 
       sendMessageToPlayers(
         match.id,
-        `Player ${data.id} played at ${row},${col}`
+        JSON.stringify({
+          status: 'playing',
+          player: currentPlayer,
+          board: match.board,
+        })
       )
 
       match.currentPlayer = match.currentPlayer === 'X' ? 'O' : 'X'
