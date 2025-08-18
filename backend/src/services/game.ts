@@ -1,59 +1,9 @@
 import { randomUUIDv7 } from 'bun'
 
-import type {
-  CloseEvent,
-  Match,
-  Message,
-  Player,
-  WinningCombination,
-} from '@app-types/game'
-import type { ServerWebSocket } from 'bun'
+import { isInvalidMove, isWinningMove } from '@utils/game'
 
-const winningCombinations: WinningCombination[] = [
-  // Rows
-  [
-    [0, 0], //[row, column]
-    [0, 1],
-    [0, 2],
-  ],
-  [
-    [1, 0],
-    [1, 1],
-    [1, 2],
-  ],
-  [
-    [2, 0],
-    [2, 1],
-    [2, 2],
-  ],
-  // Columns
-  [
-    [0, 0],
-    [1, 0],
-    [2, 0],
-  ],
-  [
-    [0, 1],
-    [1, 1],
-    [2, 1],
-  ],
-  [
-    [0, 2],
-    [1, 2],
-    [2, 2],
-  ],
-  // Diagonals
-  [
-    [0, 0],
-    [1, 1],
-    [2, 2],
-  ],
-  [
-    [0, 2],
-    [1, 1],
-    [2, 0],
-  ],
-]
+import type { CloseEvent, Match, Message, Player } from '@app-types/game'
+import type { ServerWebSocket } from 'bun'
 
 let playersConnected: Player[] = []
 let playersSearching: Player[] = []
@@ -92,9 +42,28 @@ function createMatch(
 
   matches.push(newMatch)
 
+  ws.send(
+    JSON.stringify({
+      status: 'playing',
+      details: 'match found',
+      playerSymbol: playerSymbol,
+    })
+  )
+
+  adversary.ws.send(
+    JSON.stringify({
+      status: 'playing',
+      details: 'match found',
+      playerSymbol: playerSymbol === 'X' ? 'X' : 'O',
+    })
+  )
+
   sendMessageToPlayers(
     matchId,
-    JSON.stringify({ status: 'playing', match: newMatch })
+    JSON.stringify({
+      status: 'playing',
+      match: { board: newMatch.board, currentPlayer: newMatch.currentPlayer },
+    })
   )
 }
 
@@ -125,20 +94,6 @@ export function disconnectPlayer(
   )
 
   ws.send('Connection with the server closed')
-}
-
-function isInvalidMove(row: number, col: number, match: Match) {
-  if (row < 0 || row > 2 || col < 0 || col > 2) {
-    return true
-  }
-
-  return match.board[row]![col] !== ''
-}
-
-function isWinningMove(match: Match, player: string) {
-  return winningCombinations.some((combination) =>
-    combination.every(([row, col]) => match.board[row]![col] === player)
-  )
 }
 
 export function handlePlayerMove(data: Message, ws: ServerWebSocket<unknown>) {
@@ -199,16 +154,18 @@ export function handlePlayerMove(data: Message, ws: ServerWebSocket<unknown>) {
         return
       }
 
+      match.currentPlayer = match.currentPlayer === 'X' ? 'O' : 'X'
+
       sendMessageToPlayers(
         match.id,
         JSON.stringify({
           status: 'playing',
-          player: currentPlayer,
-          board: match.board,
+          match: {
+            board: match.board,
+            currentPlayer: match.currentPlayer,
+          },
         })
       )
-
-      match.currentPlayer = match.currentPlayer === 'X' ? 'O' : 'X'
     }
   }
 }

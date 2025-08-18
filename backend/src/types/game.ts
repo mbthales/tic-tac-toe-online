@@ -6,12 +6,12 @@ import type { ServerWebSocket } from 'bun'
 
 type Position = [number, number]
 
-type CellValue = 'X' | 'O' | ''
+type PlayerSymbol = 'X' | 'O' | ''
 
 type Board = [
-  [CellValue, CellValue, CellValue],
-  [CellValue, CellValue, CellValue],
-  [CellValue, CellValue, CellValue],
+  [PlayerSymbol, PlayerSymbol, PlayerSymbol],
+  [PlayerSymbol, PlayerSymbol, PlayerSymbol],
+  [PlayerSymbol, PlayerSymbol, PlayerSymbol],
 ]
 
 export type Player = {
@@ -26,7 +26,7 @@ export type Match = {
     x: Player
   }
   board: Board
-  currentPlayer: 'X' | 'O'
+  currentPlayer: PlayerSymbol
 }
 
 export type Message = z.infer<typeof messageSchema>
