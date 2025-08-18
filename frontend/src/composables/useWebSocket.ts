@@ -6,8 +6,11 @@ import { usePlayerStore } from '@stores/player'
 
 import type { Message } from '@app-types/webSocketResponse'
 
+const socket = ref<WebSocket | null>(null)
+
 export default function useWebSocket() {
-  const socket = ref<WebSocket | null>(null)
+  const { setId, setStatus, setSymbol } = usePlayerStore()
+  const { setMatch } = useMatchStore()
 
   const connect = (url: string) => {
     socket.value = new WebSocket(url)
@@ -17,10 +20,7 @@ export default function useWebSocket() {
     }
 
     socket.value.onmessage = (message) => {
-      const { setId, setStatus } = usePlayerStore()
       const parsedMessage = jsonParser(message.data) as Message
-
-      console.log('PARSED MESSAGE', parsedMessage)
 
       if (parsedMessage) {
         if (parsedMessage.status === 'connected') {
@@ -34,6 +34,17 @@ export default function useWebSocket() {
 
         if (parsedMessage.status === 'playing') {
           setStatus('playing')
+
+          if (
+            parsedMessage.details === 'match found' &&
+            parsedMessage.playerSymbol
+          ) {
+            setSymbol(parsedMessage.playerSymbol)
+          }
+
+          if (parsedMessage.match) {
+            setMatch(parsedMessage.match)
+          }
         }
       }
     }
@@ -46,6 +57,8 @@ export default function useWebSocket() {
   const sendMessage = (message: string) => {
     if (socket.value) {
       socket.value.send(message)
+    } else {
+      console.log('WebSocket not connected or not ready')
     }
   }
 

@@ -7,6 +7,7 @@ import type { Ref } from 'vue'
 export const usePlayerStore = defineStore('player', () => {
   const status: Ref<PlayerStatus> = ref('')
   const id = ref('')
+  const symbol: Ref<PlayerSymbol> = ref('')
 
   function setStatus(newStatus: PlayerStatus) {
     status.value = newStatus
@@ -16,5 +17,9 @@ export const usePlayerStore = defineStore('player', () => {
     id.value = newId
   }
 
-  return { status, id, setStatus, setId }
+  function setSymbol(newSymbol: PlayerSymbol) {
+    symbol.value = newSymbol
+  }
+
+  return { status, id, symbol, setStatus, setId, setSymbol }
 })
