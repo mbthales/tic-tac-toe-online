@@ -6,7 +6,7 @@ import type {
   Message,
   Player,
   WinningCombination,
-} from '../types/game'
+} from '@app-types/game'
 import type { ServerWebSocket } from 'bun'
 
 const winningCombinations: WinningCombination[] = [

@@ -1,9 +1,10 @@
 import { ref } from 'vue'
 
-import jsonParser from '../helpers/jsonParser'
-import { usePlayerStore } from '../stores/player'
+import jsonParser from '@helpers/jsonParser'
+import { useMatchStore } from '@stores/match'
+import { usePlayerStore } from '@stores/player'
 
-import type { Message } from '../types/webSocketResponse'
+import type { Message } from '@app-types/webSocketResponse'
 
 export default function useWebSocket() {
   const socket = ref<WebSocket | null>(null)

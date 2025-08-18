@@ -2,7 +2,7 @@ import {
   closeEventHandler,
   messageHandler,
   openEventHandler,
-} from './controllers/game'
+} from '@controllers/game'
 
 Bun.serve({
   fetch(req, server) {

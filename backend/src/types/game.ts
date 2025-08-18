@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { closeEventSchema, messageSchema } from '../schemas/game'
+import { closeEventSchema, messageSchema } from '@schemas/game'
 
 import type { ServerWebSocket } from 'bun'
 

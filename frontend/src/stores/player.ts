@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-import type { PlayerStatus } from '../types/player'
+import type { PlayerStatus, PlayerSymbol } from '@app-types/player'
 import type { Ref } from 'vue'
 
 export const usePlayerStore = defineStore('player', () => {

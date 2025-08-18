@@ -1,12 +1,12 @@
 import { randomUUIDv7 } from 'bun'
 
-import { closeEventSchema, messageSchema } from '../schemas/game'
+import { closeEventSchema, messageSchema } from '@schemas/game'
 import {
   disconnectPlayer,
   handlePlayerMove,
   playerSearch,
-} from '../services/game'
-import { messageValidator } from '../utils/messageValidator'
+} from '@services/game'
+import { messageValidator } from '@utils/messageValidator'
 
 import type { ServerWebSocket } from 'bun'
 
