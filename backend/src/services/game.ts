@@ -54,7 +54,7 @@ function createMatch(
     JSON.stringify({
       status: 'playing',
       details: 'match found',
-      playerSymbol: playerSymbol === 'X' ? 'X' : 'O',
+      playerSymbol: playerSymbol === 'X' ? 'O' : 'X',
     })
   )
 
