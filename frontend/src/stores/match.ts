@@ -13,10 +13,15 @@ export const useMatchStore = defineStore('match', () => {
     ],
     currentPlayer: '',
   })
+  const ready = ref(false)
 
   function setMatch(newMatch: Match) {
     match.value = newMatch
   }
 
-  return { match, setMatch }
+  function setReady(value: boolean) {
+    ready.value = value
+  }
+
+  return { match, setMatch, ready, setReady }
 })

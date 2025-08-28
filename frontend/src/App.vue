@@ -2,33 +2,42 @@
   import { storeToRefs } from 'pinia'
   import { onMounted } from 'vue'
 
-  import GameBoard from './components/GameBoard.vue'
-  import useWebSocket from './composables/useWebSocket'
-  import { usePlayerStore } from './stores/player'
+  import AppButton from '@components/AppButton.vue'
+  import AppTitle from '@components/AppTitle.vue'
+  import GameBoard from '@components/GameBoard.vue'
+  import SearchingStatus from '@components/SearchingStatus.vue'
+  import useWebSocket from '@composables/useWebSocket'
+  import { useMatchStore } from '@stores/match'
+  import { usePlayerStore } from '@stores/player'
 
   const { id, status } = storeToRefs(usePlayerStore())
+  const { ready } = storeToRefs(useMatchStore())
   const { connect, sendMessage } = useWebSocket()
 
+  function searchPlayer() {
+    sendMessage(
+      JSON.stringify({
+        id: id.value,
+        status: 'searching',
+      })
+    )
+  }
   onMounted(() => {
     connect('ws://localhost:3000')
   })
 </script>
 
 <template>
-  <h1>Tic Tac Toe</h1>
-  <button
-    @click="
-      sendMessage(
-        JSON.stringify({
-          id,
-          status: 'searching',
-        })
-      )
-    "
-  >
-    Searching Player
-  </button>
-
-  <p v-if="status === 'searching'">Searching...</p>
-  <GameBoard v-if="status === 'playing'" />
+  <div class="flex h-full flex-col items-center justify-center gap-16">
+    <AppTitle />
+    <div v-if="!ready">
+      <AppButton
+        text="Search Player"
+        :func="searchPlayer"
+        v-if="status !== 'searching'"
+      />
+      <SearchingStatus :status="status" />
+    </div>
+    <GameBoard v-if="ready" />
+  </div>
 </template>

@@ -1,1 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@100..800&display=swap');
 @import "tailwindcss";
+
+@theme {  
+  --font-sora: "Sora", sans-serif;
+  --color-albescent-white-50: #faf6f2;
+  --color-albescent-white-100: #efe4d2;
+  --color-albescent-white-200: #e8d7c0;
+  --color-albescent-white-300: #d9bc98;
+  --color-albescent-white-400: #c99b6e;
+  --color-albescent-white-500: #bd8352;
+  --color-albescent-white-600: #b06f46;
+  --color-albescent-white-700: #92593c;
+  --color-albescent-white-800: #764936;
+  --color-albescent-white-900: #603d2e;
+  --color-albescent-white-950: #331e17;
+}
+
+*{
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body,
+html,
+#app {
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: var(--color-albescent-white-50);
+}

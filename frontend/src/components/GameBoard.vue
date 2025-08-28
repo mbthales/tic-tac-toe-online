@@ -10,127 +10,63 @@
   const { match } = storeToRefs(useMatchStore())
   const { sendMessage } = useWebSocket()
 
-  const isMyTurn = computed(() => symbol.value !== match.value.currentPlayer)
+  const isMyTurn = computed(() => symbol.value === match.value.currentPlayer)
 
   function handlePlayerMove(cell: string) {
-    if (!isMyTurn.value) return
-
     const [row, col] = cell.split(',').map(Number)
 
-    if (match.value.board[row][col] !== '') return
+    if (!isMyTurn.value && match.value.board[row][col] !== '') return
 
     sendMessage(
       JSON.stringify({ id: id.value, status: 'playing', details: cell })
     )
   }
+
+  function getCellClasses(row: number, col: number) {
+    const canPlay = isMyTurn.value && match.value.board[row][col] === ''
+
+    return [
+      'game-cell',
+      canPlay ? 'game-cell--interactive' : 'game-cell--disabled',
+    ]
+  }
 </script>
 
 <template>
-  <div class="flex justify-center gap-4">
-    <div class="flex flex-col gap-2">
+  <div class="game-board">
+    <div v-for="col in 3" :key="col" class="game-column">
       <div
-        @click="handlePlayerMove('0,0')"
-        :class="[
-          'w-[200px] h-[200px] border border-gray-300 flex items-center justify-center text-4xl font-bold',
-          isMyTurn && match.board[0][0] === ''
-            ? 'cursor-pointer hover:bg-gray-100'
-            : 'cursor-not-allowed opacity-50',
-        ]"
+        v-for="row in 3"
+        :key="row"
+        @click="handlePlayerMove(`${row - 1},${col - 1}`)"
+        :class="getCellClasses(row - 1, col - 1)"
       >
-        {{ match.board[0][0] }}
-      </div>
-      <div
-        @click="handlePlayerMove('0,1')"
-        :class="[
-          'w-[200px] h-[200px] border border-gray-300 flex items-center justify-center text-4xl font-bold',
-          isMyTurn && match.board[0][1] === ''
-            ? 'cursor-pointer hover:bg-gray-100'
-            : 'cursor-not-allowed opacity-50',
-        ]"
-      >
-        {{ match.board[0][1] }}
-      </div>
-      <div
-        @click="handlePlayerMove('0,2')"
-        :class="[
-          'w-[200px] h-[200px] border border-gray-300 flex items-center justify-center text-4xl font-bold',
-          isMyTurn && match.board[0][2] === ''
-            ? 'cursor-pointer hover:bg-gray-100'
-            : 'cursor-not-allowed opacity-50',
-        ]"
-      >
-        {{ match.board[0][2] }}
-      </div>
-    </div>
-    <div class="flex flex-col gap-2">
-      <div
-        @click="handlePlayerMove('1,0')"
-        :class="[
-          'w-[200px] h-[200px] border border-gray-300 flex items-center justify-center text-4xl font-bold',
-          isMyTurn && match.board[1][0] === ''
-            ? 'cursor-pointer hover:bg-gray-100'
-            : 'cursor-not-allowed opacity-50',
-        ]"
-      >
-        {{ match.board[1][0] }}
-      </div>
-      <div
-        @click="handlePlayerMove('1,1')"
-        :class="[
-          'w-[200px] h-[200px] border border-gray-300 flex items-center justify-center text-4xl font-bold',
-          isMyTurn && match.board[1][1] === ''
-            ? 'cursor-pointer hover:bg-gray-100'
-            : 'cursor-not-allowed opacity-50',
-        ]"
-      >
-        {{ match.board[1][1] }}
-      </div>
-      <div
-        @click="handlePlayerMove('1,2')"
-        :class="[
-          'w-[200px] h-[200px] border border-gray-300 flex items-center justify-center text-4xl font-bold',
-          isMyTurn && match.board[1][2] === ''
-            ? 'cursor-pointer hover:bg-gray-100'
-            : 'cursor-not-allowed opacity-50',
-        ]"
-      >
-        {{ match.board[1][2] }}
-      </div>
-    </div>
-    <div class="flex flex-col gap-2">
-      <div
-        @click="handlePlayerMove('2,0')"
-        :class="[
-          'w-[200px] h-[200px] border border-gray-300 flex items-center justify-center text-4xl font-bold',
-          isMyTurn && match.board[2][0] === ''
-            ? 'cursor-pointer hover:bg-gray-100'
-            : 'cursor-not-allowed opacity-50',
-        ]"
-      >
-        {{ match.board[2][0] }}
-      </div>
-      <div
-        @click="handlePlayerMove('2,1')"
-        :class="[
-          'w-[200px] h-[200px] border border-gray-300 flex items-center justify-center text-4xl font-bold',
-          isMyTurn && match.board[2][1] === ''
-            ? 'cursor-pointer hover:bg-gray-100'
-            : 'cursor-not-allowed opacity-50',
-        ]"
-      >
-        {{ match.board[2][1] }}
-      </div>
-      <div
-        @click="handlePlayerMove('2,2')"
-        :class="[
-          'w-[200px] h-[200px] border border-gray-300 flex items-center justify-center text-4xl font-bold',
-          isMyTurn && match.board[2][2] === ''
-            ? 'cursor-pointer hover:bg-gray-100'
-            : 'cursor-not-allowed opacity-50',
-        ]"
-      >
-        {{ match.board[2][2] }}
+        {{ match.board[row - 1][col - 1] }}
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+  @reference "../style.css";
+
+  .game-board {
+    @apply text-albescent-white-950 flex justify-center gap-4;
+  }
+
+  .game-column {
+    @apply flex flex-col gap-2;
+  }
+
+  .game-cell {
+    @apply border-albescent-white-500 flex h-[200px] w-[200px] items-center justify-center rounded-lg border-2 bg-white text-4xl font-bold transition-all duration-200;
+  }
+
+  .game-cell--interactive {
+    @apply hover:bg-albescent-white-100 hover:border-albescent-white-400 cursor-pointer hover:scale-105 hover:shadow-lg active:scale-95;
+  }
+
+  .game-cell--disabled {
+    @apply cursor-not-allowed bg-gray-50 opacity-50;
+  }
+</style>
