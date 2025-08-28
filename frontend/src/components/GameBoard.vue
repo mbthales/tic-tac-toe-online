@@ -33,15 +33,20 @@
 </script>
 
 <template>
-  <div class="game-board">
-    <div v-for="col in 3" :key="col" class="game-column">
-      <div
-        v-for="row in 3"
-        :key="row"
-        @click="handlePlayerMove(`${row - 1},${col - 1}`)"
-        :class="getCellClasses(row - 1, col - 1)"
-      >
-        {{ match.board[row - 1][col - 1] }}
+  <div
+    class="text-albescent-white-950 font-sora flex flex-col items-center gap-4"
+  >
+    <p class="text-xl">It's {{ isMyTurn ? 'your' : "opponent's" }} turn.</p>
+    <div class="flex justify-center gap-4">
+      <div v-for="col in 3" :key="col" class="flex flex-col gap-2">
+        <div
+          v-for="row in 3"
+          :key="row"
+          @click="handlePlayerMove(`${row - 1},${col - 1}`)"
+          :class="getCellClasses(row - 1, col - 1)"
+        >
+          {{ match.board[row - 1][col - 1] }}
+        </div>
       </div>
     </div>
   </div>
@@ -50,16 +55,8 @@
 <style scoped>
   @reference "../style.css";
 
-  .game-board {
-    @apply text-albescent-white-950 flex justify-center gap-4;
-  }
-
-  .game-column {
-    @apply flex flex-col gap-2;
-  }
-
   .game-cell {
-    @apply border-albescent-white-500 flex h-[200px] w-[200px] items-center justify-center rounded-lg border-2 bg-white text-4xl font-bold transition-all duration-200;
+    @apply border-albescent-white-500 flex h-[200px] w-[200px] items-center justify-center border-2 text-4xl font-bold transition-all duration-100;
   }
 
   .game-cell--interactive {
@@ -67,6 +64,6 @@
   }
 
   .game-cell--disabled {
-    @apply cursor-not-allowed bg-gray-50 opacity-50;
+    @apply bg-albescent-white-50 cursor-not-allowed opacity-50;
   }
 </style>

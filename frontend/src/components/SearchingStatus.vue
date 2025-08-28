@@ -1,10 +1,13 @@
 <script setup lang="ts">
+  import { storeToRefs } from 'pinia'
   import { onUnmounted, ref, watch } from 'vue'
 
   import { useMatchStore } from '@stores/match'
+  import { usePlayerStore } from '@stores/player'
 
   import type { PlayerStatus } from '@app-types/player'
 
+  const { symbol } = storeToRefs(usePlayerStore())
   const { setReady } = useMatchStore()
 
   const props = defineProps<{
@@ -72,10 +75,10 @@
     class="flex flex-col items-center gap-2"
   >
     <p class="text-albescent-white-950 font-sora text-xl font-bold">
-      Match found!
+      Match found. You are playing as {{ symbol }}.
     </p>
     <p v-if="timeMatchReady" class="font-sora text-sm text-gray-500">
-      {{ timeMatchReady }}s
+      Starting in {{ timeMatchReady }}s
     </p>
   </div>
 </template>

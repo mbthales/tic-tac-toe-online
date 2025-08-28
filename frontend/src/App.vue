@@ -34,7 +34,7 @@
       <AppButton
         text="Search Player"
         :func="searchPlayer"
-        v-if="status !== 'searching'"
+        v-if="status === 'connected'"
       />
       <SearchingStatus :status="status" />
     </div>
