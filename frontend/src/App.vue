@@ -4,6 +4,7 @@
 
   import AppButton from '@components/AppButton.vue'
   import AppTitle from '@components/AppTitle.vue'
+  import FinishedGame from '@components/FinishedGame.vue'
   import GameBoard from '@components/GameBoard.vue'
   import SearchingStatus from '@components/SearchingStatus.vue'
   import useWebSocket from '@composables/useWebSocket'
@@ -11,10 +12,12 @@
   import { usePlayerStore } from '@stores/player'
 
   const { id, status } = storeToRefs(usePlayerStore())
+  const { resetPlayer } = usePlayerStore()
   const { ready } = storeToRefs(useMatchStore())
   const { connect, sendMessage } = useWebSocket()
 
   function searchPlayer() {
+    resetPlayer()
     sendMessage(
       JSON.stringify({
         id: id.value,
@@ -39,5 +42,6 @@
       <SearchingStatus :status="status" />
     </div>
     <GameBoard v-if="ready" />
+    <FinishedGame v-if="status === 'finished'" @restart="searchPlayer" />
   </div>
 </template>

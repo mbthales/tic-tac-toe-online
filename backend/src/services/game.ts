@@ -132,7 +132,10 @@ export function handlePlayerMove(data: Message, ws: ServerWebSocket<unknown>) {
           match.id,
           JSON.stringify({
             status: 'finished',
-            player: currentPlayer,
+            match: {
+              board: match.board,
+              currentPlayer: match.currentPlayer,
+            },
             details: 'wins',
           })
         )
@@ -145,11 +148,17 @@ export function handlePlayerMove(data: Message, ws: ServerWebSocket<unknown>) {
       )
 
       if (isBoardFull) {
-        const data = {
-          status: 'finished',
-          details: 'tie',
-        }
-        sendMessageToPlayers(match.id, JSON.stringify({ data }))
+        sendMessageToPlayers(
+          match.id,
+          JSON.stringify({
+            status: 'finished',
+            details: 'tie',
+            match: {
+              board: match.board,
+              currentPlayer: match.currentPlayer,
+            },
+          })
+        )
         matches = matches.filter((m) => m.id !== match.id)
         return
       }

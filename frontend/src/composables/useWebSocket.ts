@@ -10,7 +10,7 @@ const socket = ref<WebSocket | null>(null)
 
 export default function useWebSocket() {
   const { setId, setStatus, setSymbol } = usePlayerStore()
-  const { setMatch } = useMatchStore()
+  const { setMatch, resetMatch, setWinner, setTie } = useMatchStore()
 
   const connect = (url: string) => {
     socket.value = new WebSocket(url)
@@ -30,6 +30,7 @@ export default function useWebSocket() {
 
         if (parsedMessage.status === 'searching') {
           setStatus('searching')
+          resetMatch()
         }
 
         if (parsedMessage.status === 'playing') {
@@ -44,6 +45,20 @@ export default function useWebSocket() {
 
           if (parsedMessage.match) {
             setMatch(parsedMessage.match)
+          }
+        }
+
+        if (parsedMessage.status === 'finished') {
+          setStatus('finished')
+
+          if (parsedMessage.details === 'tie') {
+            setTie(true)
+            setMatch(parsedMessage.match!)
+          }
+
+          if (parsedMessage.details === 'wins' && parsedMessage.match) {
+            setMatch(parsedMessage.match)
+            setWinner(parsedMessage.match.currentPlayer)
           }
         }
       }
