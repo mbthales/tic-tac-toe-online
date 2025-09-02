@@ -7,14 +7,13 @@
   import FinishedGame from '@components/FinishedGame.vue'
   import GameBoard from '@components/GameBoard.vue'
   import SearchingStatus from '@components/SearchingStatus.vue'
-  import useWebSocket from '@composables/useWebSocket'
+  import { connect, sendMessage } from '@services/webSockets'
   import { useMatchStore } from '@stores/match'
   import { usePlayerStore } from '@stores/player'
 
   const { id, status } = storeToRefs(usePlayerStore())
   const { resetPlayer } = usePlayerStore()
   const { ready } = storeToRefs(useMatchStore())
-  const { connect, sendMessage } = useWebSocket()
 
   function searchPlayer() {
     resetPlayer()
@@ -25,6 +24,7 @@
       })
     )
   }
+
   onMounted(() => {
     connect('ws://localhost:3000')
   })

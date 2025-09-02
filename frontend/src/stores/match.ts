@@ -18,11 +18,9 @@ export const useMatchStore = defineStore('match', () => {
   const winner: Ref<PlayerSymbol> = ref('')
   const tie = ref(false)
 
-  function setMatch(newMatch: Match) {
-    match.value = newMatch
-  }
+  const setMatch = (newMatch: Match) => (match.value = newMatch)
 
-  function resetMatch() {
+  const resetMatch = () => {
     match.value = {
       board: [
         ['', '', ''],
@@ -36,17 +34,11 @@ export const useMatchStore = defineStore('match', () => {
     tie.value = false
   }
 
-  function setReady(value: boolean) {
-    ready.value = value
-  }
+  const setReady = (value: boolean) => (ready.value = value)
 
-  function setWinner(value: PlayerSymbol) {
-    winner.value = value
-  }
+  const setWinner = (value: PlayerSymbol) => (winner.value = value)
 
-  function setTie(value: boolean) {
-    tie.value = value
-  }
+  const setTie = (value: boolean) => (tie.value = value)
 
   return {
     match,

@@ -18,14 +18,14 @@
   const timeMatchReady = ref(5)
   let currentInterval: number | null = null
 
-  function startSearchingTimer() {
+  const startSearchingTimer = () => {
     timeSearching.value = 0
     currentInterval = setInterval(() => {
       timeSearching.value++
     }, 1000)
   }
 
-  function startMatchReadyTimer() {
+  const startMatchReadyTimer = () => {
     timeMatchReady.value = 5
     currentInterval = setInterval(() => {
       timeMatchReady.value--
@@ -37,7 +37,7 @@
     }, 1000)
   }
 
-  function clearCurrentInterval() {
+  const clearCurrentInterval = () => {
     if (currentInterval) {
       clearInterval(currentInterval)
       currentInterval = null

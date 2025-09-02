@@ -1,6 +1,5 @@
 <script setup lang="ts">
   import { storeToRefs } from 'pinia'
-  import { watch } from 'vue'
 
   import AppButton from '@components/AppButton.vue'
   import { useMatchStore } from '@stores/match'
@@ -8,12 +7,6 @@
 
   const { winner, tie } = storeToRefs(useMatchStore())
   const { symbol } = storeToRefs(usePlayerStore())
-
-  watch(tie, (newValue) => {
-    if (newValue) {
-      console.log('ITS A TIE!!!!!!!', newValue)
-    }
-  })
 </script>
 
 <template>
@@ -29,4 +22,3 @@
     <AppButton :func="() => $emit('restart')" text="Play Again" />
   </div>
 </template>
-s

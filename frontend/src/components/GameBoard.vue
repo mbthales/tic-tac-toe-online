@@ -2,17 +2,16 @@
   import { storeToRefs } from 'pinia'
   import { computed } from 'vue'
 
-  import useWebSocket from '@composables/useWebSocket'
+  import { sendMessage } from '@services/webSockets'
   import { useMatchStore } from '@stores/match'
   import { usePlayerStore } from '@stores/player'
 
   const { id, symbol } = storeToRefs(usePlayerStore())
   const { match } = storeToRefs(useMatchStore())
-  const { sendMessage } = useWebSocket()
 
   const isMyTurn = computed(() => symbol.value === match.value.currentPlayer)
 
-  function handlePlayerMove(cell: string) {
+  const handlePlayerMove = (cell: string) => {
     const [row, col] = cell.split(',').map(Number)
 
     if (!isMyTurn.value && match.value.board[row][col] !== '') return
@@ -22,7 +21,7 @@
     )
   }
 
-  function getCellClasses(row: number, col: number) {
+  const getCellClasses = (row: number, col: number) => {
     const canPlay = isMyTurn.value && match.value.board[row][col] === ''
 
     return [

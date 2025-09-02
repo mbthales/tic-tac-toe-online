@@ -9,19 +9,13 @@ export const usePlayerStore = defineStore('player', () => {
   const id = ref('')
   const symbol: Ref<PlayerSymbol> = ref('')
 
-  function setStatus(newStatus: PlayerStatus) {
-    status.value = newStatus
-  }
+  const setStatus = (newStatus: PlayerStatus) => (status.value = newStatus)
 
-  function setId(newId: string) {
-    id.value = newId
-  }
+  const setId = (newId: string) => (id.value = newId)
 
-  function setSymbol(newSymbol: PlayerSymbol) {
-    symbol.value = newSymbol
-  }
+  const setSymbol = (newSymbol: PlayerSymbol) => (symbol.value = newSymbol)
 
-  function resetPlayer() {
+  const resetPlayer = () => {
     status.value = ''
     symbol.value = ''
   }

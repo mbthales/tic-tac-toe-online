@@ -14,7 +14,7 @@
       "@app-types/*": ["src/types/*"],
       "@helpers/*": ["src/helpers/*"],
       "@components/*": ["src/components/*"],
-      "@composables/*": ["src/composables/*"]
+      "@services/*": ["src/services/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]
