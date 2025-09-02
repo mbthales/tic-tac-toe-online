@@ -1,8 +1,5 @@
-import {
-  closeEventHandler,
-  messageHandler,
-  openEventHandler,
-} from '@controllers/game'
+import { messageHandler, openEventHandler } from '@controllers/game'
+import { disconnectPlayer } from '@services/game'
 
 Bun.serve({
   fetch(req, server) {
@@ -17,8 +14,8 @@ Bun.serve({
     message(ws, message) {
       messageHandler(ws, message.toString())
     },
-    close(ws, message) {
-      closeEventHandler(ws, message.toString())
+    close(ws) {
+      disconnectPlayer(ws)
     },
   },
   port: 3000,

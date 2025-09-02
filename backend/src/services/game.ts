@@ -1,17 +1,25 @@
 import { randomUUIDv7 } from 'bun'
 
+import {
+  addConnectedPlayer,
+  addMatch,
+  addSearchingPlayer,
+  findConnectedPlayerByWebSocket,
+  findMatchByPlayerId,
+  findMatchByPlayerWebSocket,
+  getFirstSearchingPlayer,
+  getSearchingPlayersCount,
+  removeConnectedPlayer,
+  removeMatchById,
+  removeMatchByPlayerWebSocket,
+  removeSearchingPlayer,
+} from '@states/game'
 import { isInvalidMove, isWinningMove } from '@utils/game'
 
-import type { CloseEvent, Match, Message, Player } from '@app-types/game'
+import type { Match, Message, Player } from '@app-types/game'
 import type { ServerWebSocket } from 'bun'
 
-let playersConnected: Player[] = []
-let playersSearching: Player[] = []
-let matches: Match[] = []
-
-function sendMessageToPlayers(matchId: string, message: string) {
-  const match = matches.find((m) => m.id === matchId)
-
+function sendMessageToPlayers(match: Match, message: string) {
   if (match) {
     match.players.o.ws.send(message)
     match.players.x.ws.send(message)
@@ -40,7 +48,7 @@ function createMatch(
     currentPlayer: playerSymbol,
   }
 
-  matches.push(newMatch)
+  addMatch(newMatch)
 
   ws.send(
     JSON.stringify({
@@ -59,7 +67,7 @@ function createMatch(
   )
 
   sendMessageToPlayers(
-    matchId,
+    newMatch,
     JSON.stringify({
       status: 'playing',
       match: { board: newMatch.board, currentPlayer: newMatch.currentPlayer },
@@ -68,14 +76,14 @@ function createMatch(
 }
 
 export function playerSearch(data: Message, ws: ServerWebSocket<unknown>) {
-  playersConnected.push({ id: data.id, ws })
+  addConnectedPlayer({ id: data.id, ws })
 
-  if (playersSearching.length <= 0) {
-    playersSearching.push({ id: data.id, ws })
+  if (!getSearchingPlayersCount()) {
+    addSearchingPlayer({ id: data.id, ws })
 
     ws.send(JSON.stringify({ status: 'searching' }))
   } else {
-    const adversary = playersSearching.shift()
+    const adversary = getFirstSearchingPlayer()
 
     if (adversary) {
       createMatch(adversary, data, ws)
@@ -83,23 +91,26 @@ export function playerSearch(data: Message, ws: ServerWebSocket<unknown>) {
   }
 }
 
-export function disconnectPlayer(
-  data: CloseEvent,
-  ws: ServerWebSocket<unknown>
-) {
-  playersConnected = playersConnected.filter((player) => player.id !== data.id)
-  playersSearching = playersSearching.filter((player) => player.id !== data.id)
-  matches = matches.filter(
-    (match) => match.players.o.id === data.id || match.players.x.id === data.id
-  )
+export function disconnectPlayer(ws: ServerWebSocket<unknown>) {
+  const match = findMatchByPlayerWebSocket(ws)
+  const player = findConnectedPlayerByWebSocket(ws)
 
-  ws.send('Connection with the server closed')
+  if (match && player) {
+    sendMessageToPlayers(
+      match,
+      JSON.stringify({
+        status: 'disconnected',
+        details: player.id,
+      })
+    )
+    removeMatchByPlayerWebSocket(ws)
+    removeConnectedPlayer(ws)
+    removeSearchingPlayer(ws)
+  }
 }
 
 export function handlePlayerMove(data: Message, ws: ServerWebSocket<unknown>) {
-  const match = matches.find(
-    (m) => m.players.o.id === data.id || m.players.x.id === data.id
-  )
+  const match = findMatchByPlayerId(data.id)
 
   if (!match) {
     ws.send('You are not in a match')
@@ -129,7 +140,7 @@ export function handlePlayerMove(data: Message, ws: ServerWebSocket<unknown>) {
 
       if (isWinningMove(match, currentPlayer)) {
         sendMessageToPlayers(
-          match.id,
+          match,
           JSON.stringify({
             status: 'finished',
             match: {
@@ -139,7 +150,7 @@ export function handlePlayerMove(data: Message, ws: ServerWebSocket<unknown>) {
             details: 'wins',
           })
         )
-        matches = matches.filter((m) => m.id !== match.id)
+        removeMatchById(match.id)
         return
       }
 
@@ -149,7 +160,7 @@ export function handlePlayerMove(data: Message, ws: ServerWebSocket<unknown>) {
 
       if (isBoardFull) {
         sendMessageToPlayers(
-          match.id,
+          match,
           JSON.stringify({
             status: 'finished',
             details: 'tie',
@@ -159,14 +170,14 @@ export function handlePlayerMove(data: Message, ws: ServerWebSocket<unknown>) {
             },
           })
         )
-        matches = matches.filter((m) => m.id !== match.id)
+        removeMatchById(match.id)
         return
       }
 
       match.currentPlayer = match.currentPlayer === 'X' ? 'O' : 'X'
 
       sendMessageToPlayers(
-        match.id,
+        match,
         JSON.stringify({
           status: 'playing',
           match: {

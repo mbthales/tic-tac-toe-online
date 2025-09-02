@@ -20,11 +20,12 @@
     "noPropertyAccessFromIndexSignature": false,
     "paths": {
       "@controllers/*": ["./src/controllers/*"],
-      "@stores/*": ["./src/stores/*"],
+      "@states/*": ["./src/states/*"],
       "@app-types/*": ["./src/types/*"],
       "@utils/*": ["./src/utils/*"],
       "@schemas/*": ["./src/schemas/*"],
       "@services/*": ["./src/services/*"]
+
     }
   }
 }
