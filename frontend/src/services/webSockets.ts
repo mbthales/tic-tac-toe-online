@@ -12,7 +12,7 @@ const handleMessage = (message: MessageEvent) => {
   if (!parsedMessage) return
 
   const { setId, setStatus, setSymbol, resetPlayer } = usePlayerStore()
-  const { setMatch, resetMatch, setWinner, setTie } = useMatchStore()
+  const { setMatch, resetMatch, setWinner, setDraw } = useMatchStore()
 
   switch (parsedMessage.status) {
     case 'connected':
@@ -46,8 +46,8 @@ const handleMessage = (message: MessageEvent) => {
       setStatus('finished')
       setMatch(parsedMessage.match)
 
-      if (parsedMessage.details === 'tie') {
-        setTie(true)
+      if (parsedMessage.details === 'draw') {
+        setDraw(true)
       } else if (parsedMessage.details === 'wins') {
         setWinner(parsedMessage.match.currentPlayer)
       }

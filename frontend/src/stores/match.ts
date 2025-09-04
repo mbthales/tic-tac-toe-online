@@ -16,7 +16,7 @@ export const useMatchStore = defineStore('match', () => {
   })
   const ready = ref(false)
   const winner: Ref<PlayerSymbol> = ref('')
-  const tie = ref(false)
+  const draw = ref(false)
 
   const setMatch = (newMatch: Match) => (match.value = newMatch)
 
@@ -31,14 +31,14 @@ export const useMatchStore = defineStore('match', () => {
     }
     ready.value = false
     winner.value = ''
-    tie.value = false
+    draw.value = false
   }
 
   const setReady = (value: boolean) => (ready.value = value)
 
   const setWinner = (value: PlayerSymbol) => (winner.value = value)
 
-  const setTie = (value: boolean) => (tie.value = value)
+  const setDraw = (value: boolean) => (draw.value = value)
 
   return {
     match,
@@ -48,7 +48,7 @@ export const useMatchStore = defineStore('match', () => {
     setReady,
     winner,
     setWinner,
-    tie,
-    setTie,
+    draw,
+    setDraw,
   }
 })
