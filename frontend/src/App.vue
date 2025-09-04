@@ -6,8 +6,9 @@
   import AppTitle from '@components/AppTitle.vue'
   import FinishedGame from '@components/FinishedGame.vue'
   import GameBoard from '@components/GameBoard.vue'
+  import ReconnectedGame from '@components/ReconnectedGame.vue'
   import SearchingStatus from '@components/SearchingStatus.vue'
-  import { connect, sendMessage } from '@services/webSockets'
+  import { connect, disconnect, sendMessage } from '@services/webSockets'
   import { useMatchStore } from '@stores/match'
   import { usePlayerStore } from '@stores/player'
 
@@ -15,7 +16,7 @@
   const { resetPlayer } = usePlayerStore()
   const { ready } = storeToRefs(useMatchStore())
 
-  function searchPlayer() {
+  const searchPlayer = () => {
     resetPlayer()
     sendMessage(
       JSON.stringify({
@@ -27,6 +28,10 @@
 
   onMounted(() => {
     connect('ws://localhost:3000')
+
+    window.addEventListener('beforeunload', () => {
+      disconnect()
+    })
   })
 </script>
 
@@ -43,5 +48,6 @@
     </div>
     <GameBoard v-if="ready" />
     <FinishedGame v-if="status === 'finished'" @restart="searchPlayer" />
+    <ReconnectedGame v-if="status === 'disconnected'" @restart="searchPlayer" />
   </div>
 </template>

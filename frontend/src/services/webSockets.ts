@@ -8,9 +8,10 @@ let socket: WebSocket | null = null
 
 const handleMessage = (message: MessageEvent) => {
   const parsedMessage = jsonParser(message.data) as Message
+
   if (!parsedMessage) return
 
-  const { setId, setStatus, setSymbol } = usePlayerStore()
+  const { setId, setStatus, setSymbol, resetPlayer } = usePlayerStore()
   const { setMatch, resetMatch, setWinner, setTie } = useMatchStore()
 
   switch (parsedMessage.status) {
@@ -50,6 +51,12 @@ const handleMessage = (message: MessageEvent) => {
       } else if (parsedMessage.details === 'wins') {
         setWinner(parsedMessage.match.currentPlayer)
       }
+      break
+
+    case 'disconnected':
+      resetMatch()
+      resetPlayer()
+      setStatus('disconnected')
       break
   }
 }
