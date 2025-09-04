@@ -6,7 +6,10 @@ import { messageValidator } from '@utils/messageValidator'
 
 import type { ServerWebSocket } from 'bun'
 
-export function messageHandler(ws: ServerWebSocket<unknown>, message: string) {
+export const messageHandler = (
+  ws: ServerWebSocket<unknown>,
+  message: string
+) => {
   const validatedMessage = messageValidator(ws, message, messageSchema)
 
   if (!validatedMessage) return
@@ -19,7 +22,7 @@ export function messageHandler(ws: ServerWebSocket<unknown>, message: string) {
   }
 }
 
-export function openEventHandler(ws: ServerWebSocket<unknown>) {
+export const openEventHandler = (ws: ServerWebSocket<unknown>) => {
   const playerId = randomUUIDv7()
 
   ws.send(

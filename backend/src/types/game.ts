@@ -6,9 +6,9 @@ import type { ServerWebSocket } from 'bun'
 
 type Position = [number, number]
 
-type PlayerSymbol = 'X' | 'O' | ''
+export type PlayerSymbol = 'X' | 'O' | ''
 
-type Board = [
+export type Board = [
   [PlayerSymbol, PlayerSymbol, PlayerSymbol],
   [PlayerSymbol, PlayerSymbol, PlayerSymbol],
   [PlayerSymbol, PlayerSymbol, PlayerSymbol],

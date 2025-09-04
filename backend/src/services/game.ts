@@ -15,22 +15,29 @@ import {
   removeSearchingPlayer,
 } from '@states/game'
 import { isInvalidMove, isWinningMove } from '@utils/game'
+import {
+  createDisconnectedMessage,
+  createFinishedMessage,
+  createMatchFoundMessage,
+  createPlayingMessage,
+  createSearchingMessage,
+} from '@utils/message'
 
 import type { Match, Message, Player } from '@app-types/game'
 import type { ServerWebSocket } from 'bun'
 
-function sendMessageToPlayers(match: Match, message: string) {
+const sendMessageToPlayers = (match: Match, message: string) => {
   if (match) {
     match.players.o.ws.send(message)
     match.players.x.ws.send(message)
   }
 }
 
-function createMatch(
+const createMatch = (
   adversary: Player,
   data: Message,
   ws: ServerWebSocket<unknown>
-) {
+) => {
   const matchId = randomUUIDv7()
   const playerSymbol = Math.random() < 0.5 ? 'X' : 'O'
 
@@ -50,38 +57,22 @@ function createMatch(
 
   addMatch(newMatch)
 
-  ws.send(
-    JSON.stringify({
-      status: 'playing',
-      details: 'match found',
-      playerSymbol: playerSymbol,
-    })
-  )
-
-  adversary.ws.send(
-    JSON.stringify({
-      status: 'playing',
-      details: 'match found',
-      playerSymbol: playerSymbol === 'X' ? 'O' : 'X',
-    })
-  )
+  ws.send(createMatchFoundMessage(playerSymbol))
+  adversary.ws.send(createMatchFoundMessage(playerSymbol === 'X' ? 'O' : 'X'))
 
   sendMessageToPlayers(
     newMatch,
-    JSON.stringify({
-      status: 'playing',
-      match: { board: newMatch.board, currentPlayer: newMatch.currentPlayer },
-    })
+    createPlayingMessage(newMatch.board, newMatch.currentPlayer)
   )
 }
 
-export function playerSearch(data: Message, ws: ServerWebSocket<unknown>) {
+export const playerSearch = (data: Message, ws: ServerWebSocket<unknown>) => {
   addConnectedPlayer({ id: data.id, ws })
 
   if (!getSearchingPlayersCount()) {
     addSearchingPlayer({ id: data.id, ws })
 
-    ws.send(JSON.stringify({ status: 'searching' }))
+    ws.send(createSearchingMessage())
   } else {
     const adversary = getFirstSearchingPlayer()
 
@@ -91,25 +82,22 @@ export function playerSearch(data: Message, ws: ServerWebSocket<unknown>) {
   }
 }
 
-export function disconnectPlayer(ws: ServerWebSocket<unknown>) {
+export const disconnectPlayer = (ws: ServerWebSocket<unknown>) => {
   const match = findMatchByPlayerWebSocket(ws)
   const player = findConnectedPlayerByWebSocket(ws)
 
   if (match && player) {
-    sendMessageToPlayers(
-      match,
-      JSON.stringify({
-        status: 'disconnected',
-        details: player.id,
-      })
-    )
+    sendMessageToPlayers(match, createDisconnectedMessage(player.id))
     removeMatchByPlayerWebSocket(ws)
     removeConnectedPlayer(ws)
     removeSearchingPlayer(ws)
   }
 }
 
-export function handlePlayerMove(data: Message, ws: ServerWebSocket<unknown>) {
+export const handlePlayerMove = (
+  data: Message,
+  ws: ServerWebSocket<unknown>
+) => {
   const match = findMatchByPlayerId(data.id)
 
   if (!match) {
@@ -125,14 +113,22 @@ export function handlePlayerMove(data: Message, ws: ServerWebSocket<unknown>) {
       const col = Number.parseInt(colStr, 10)
 
       if (isInvalidMove(row, col, match)) {
-        ws.send(JSON.stringify({ status: 'playing', details: 'invalid move' }))
+        ws.send(
+          createPlayingMessage(match.board, match.currentPlayer, 'invalid move')
+        )
         return
       }
 
       const currentPlayer = match.players.o.id === data.id ? 'O' : 'X'
 
       if (currentPlayer !== match.currentPlayer) {
-        ws.send(JSON.stringify({ status: 'playing', details: 'not your turn' }))
+        ws.send(
+          createPlayingMessage(
+            match.board,
+            match.currentPlayer,
+            'not your turn'
+          )
+        )
         return
       }
 
@@ -141,14 +137,7 @@ export function handlePlayerMove(data: Message, ws: ServerWebSocket<unknown>) {
       if (isWinningMove(match, currentPlayer)) {
         sendMessageToPlayers(
           match,
-          JSON.stringify({
-            status: 'finished',
-            match: {
-              board: match.board,
-              currentPlayer: match.currentPlayer,
-            },
-            details: 'wins',
-          })
+          createFinishedMessage(match.board, match.currentPlayer, 'wins')
         )
         removeMatchById(match.id)
         return
@@ -161,14 +150,7 @@ export function handlePlayerMove(data: Message, ws: ServerWebSocket<unknown>) {
       if (isBoardFull) {
         sendMessageToPlayers(
           match,
-          JSON.stringify({
-            status: 'finished',
-            details: 'tie',
-            match: {
-              board: match.board,
-              currentPlayer: match.currentPlayer,
-            },
-          })
+          createFinishedMessage(match.board, match.currentPlayer, 'draw')
         )
         removeMatchById(match.id)
         return
@@ -178,13 +160,7 @@ export function handlePlayerMove(data: Message, ws: ServerWebSocket<unknown>) {
 
       sendMessageToPlayers(
         match,
-        JSON.stringify({
-          status: 'playing',
-          match: {
-            board: match.board,
-            currentPlayer: match.currentPlayer,
-          },
-        })
+        createPlayingMessage(match.board, match.currentPlayer)
       )
     }
   }
