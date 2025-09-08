@@ -8,6 +8,7 @@
   import GameBoard from '@components/GameBoard.vue'
   import ReconnectedGame from '@components/ReconnectedGame.vue'
   import SearchingStatus from '@components/SearchingStatus.vue'
+  import { config } from '@config/index.ts'
   import { connect, disconnect, sendMessage } from '@services/webSockets'
   import { useMatchStore } from '@stores/match'
   import { usePlayerStore } from '@stores/player'
@@ -27,7 +28,7 @@
   }
 
   onMounted(() => {
-    connect('ws://localhost:3000')
+    connect(config.websocketUrl)
 
     window.addEventListener('beforeunload', () => {
       disconnect()
