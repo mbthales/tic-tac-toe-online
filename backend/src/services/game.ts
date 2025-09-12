@@ -33,6 +33,19 @@ const sendMessageToPlayers = (match: Match, message: string) => {
   }
 }
 
+export const connectPlayer = (ws: ServerWebSocket<unknown>) => {
+  const playerId = randomUUIDv7()
+
+  addConnectedPlayer({ id: playerId, ws })
+
+  ws.send(
+    JSON.stringify({
+      status: 'connected',
+      id: playerId,
+    })
+  )
+}
+
 const createMatch = (
   adversary: Player,
   data: Message,
@@ -67,8 +80,6 @@ const createMatch = (
 }
 
 export const playerSearch = (data: Message, ws: ServerWebSocket<unknown>) => {
-  addConnectedPlayer({ id: data.id, ws })
-
   if (!getSearchingPlayersCount()) {
     addSearchingPlayer({ id: data.id, ws })
 
@@ -89,6 +100,9 @@ export const disconnectPlayer = (ws: ServerWebSocket<unknown>) => {
   if (match && player) {
     sendMessageToPlayers(match, createDisconnectedMessage(player.id))
     removeMatchByPlayerWebSocket(ws)
+    removeConnectedPlayer(ws)
+    removeSearchingPlayer(ws)
+  } else {
     removeConnectedPlayer(ws)
     removeSearchingPlayer(ws)
   }

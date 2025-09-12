@@ -5,26 +5,39 @@ export let playersConnected: Player[] = []
 export let playersSearching: Player[] = []
 export let matches: Match[] = []
 
-export const addConnectedPlayer = (player: Player) =>
+export const addConnectedPlayer = (player: Player) => {
   playersConnected.push(player)
+}
 
-export const removeConnectedPlayer = (ws: ServerWebSocket<unknown>) =>
-  (playersConnected = playersConnected.filter((player) => player.ws !== ws))
+export const removeConnectedPlayer = (ws: ServerWebSocket<unknown>) => {
+  playersConnected = playersConnected.filter((player) => player.ws !== ws)
+}
 
-export const findConnectedPlayerByWebSocket = (ws: ServerWebSocket<unknown>) =>
-  playersConnected.find((player) => player.ws === ws)
+export const findConnectedPlayerByWebSocket = (
+  ws: ServerWebSocket<unknown>
+) => {
+  return playersConnected.find((player) => player.ws === ws)
+}
 
-export const addSearchingPlayer = (player: Player) =>
+export const addSearchingPlayer = (player: Player) => {
   playersSearching.push(player)
+}
 
-export const getFirstSearchingPlayer = () => playersSearching.shift()
+export const getFirstSearchingPlayer = () => {
+  return playersSearching.shift()
+}
 
-export const getSearchingPlayersCount = () => playersSearching.length
+export const getSearchingPlayersCount = () => {
+  return playersSearching.length
+}
 
-export const removeSearchingPlayer = (ws: ServerWebSocket<unknown>) =>
-  (playersSearching = playersSearching.filter((player) => player.ws !== ws))
+export const removeSearchingPlayer = (ws: ServerWebSocket<unknown>) => {
+  playersSearching = playersSearching.filter((player) => player.ws !== ws)
+}
 
-export const addMatch = (match: Match) => matches.push(match)
+export const addMatch = (match: Match) => {
+  matches.push(match)
+}
 
 export const removeMatchByPlayerWebSocket = (ws: ServerWebSocket<unknown>) => {
   matches = matches.filter(
@@ -36,13 +49,16 @@ export const removeMatchById = (matchId: string) => {
   matches = matches.filter((m) => m.id !== matchId)
 }
 
-export const findMatchByPlayerId = (playerId: string) =>
-  matches.find(
+export const findMatchByPlayerId = (playerId: string) => {
+  return matches.find(
     (m) => m.players.o.id === playerId || m.players.x.id === playerId
   )
+}
 
-export const findMatchByPlayerWebSocket = (ws: ServerWebSocket<unknown>) =>
-  matches.find((m) => m.players.o.ws === ws || m.players.x.ws === ws)
+export const findMatchByPlayerWebSocket = (ws: ServerWebSocket<unknown>) => {
+  return matches.find((m) => m.players.o.ws === ws || m.players.x.ws === ws)
+}
 
-export const findMatchById = (matchId: string) =>
-  matches.find((m) => m.id === matchId)
+export const findMatchById = (matchId: string) => {
+  return matches.find((m) => m.id === matchId)
+}

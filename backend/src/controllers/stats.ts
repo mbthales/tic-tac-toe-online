@@ -6,7 +6,6 @@ export const statsRequestHandler = () => {
   return new Response(JSON.stringify(stats), {
     headers: {
       'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
     },
     status: 200,
   })
