@@ -6,6 +6,7 @@
   import AppTitle from '@components/AppTitle.vue'
   import FinishedGame from '@components/FinishedGame.vue'
   import GameBoard from '@components/GameBoard.vue'
+  import GameStats from '@components/GameStats.vue'
   import ReconnectedGame from '@components/ReconnectedGame.vue'
   import SearchingStatus from '@components/SearchingStatus.vue'
   import { config } from '@config/index.ts'
@@ -39,6 +40,7 @@
 <template>
   <div class="flex h-full flex-col items-center justify-center gap-16">
     <AppTitle />
+    <GameStats />
     <div v-if="!ready">
       <AppButton
         text="Search Player"
