@@ -16,7 +16,7 @@ WORKDIR /app
 
 ENV PORT=3000
 ENV NODE_ENV=production
-ENV FRONTEND_URL='https://mbtictactoeonline.netlify.app/'
+ENV FRONTEND_URL='https://mbtictactoeonline.netlify.app'
 
 COPY --from=builder /app/dist ./
 
