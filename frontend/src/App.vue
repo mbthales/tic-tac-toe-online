@@ -42,6 +42,7 @@
     <AppTitle />
     <GameStats />
     <div v-if="!ready">
+      <p v-if="status === 'connecting'">Connecting...</p>
       <AppButton
         text="Search Player"
         :func="searchPlayer"

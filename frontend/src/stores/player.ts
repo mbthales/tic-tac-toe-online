@@ -5,7 +5,7 @@ import type { PlayerStatus, PlayerSymbol } from '@app-types/player'
 import type { Ref } from 'vue'
 
 export const usePlayerStore = defineStore('player', () => {
-  const status: Ref<PlayerStatus> = ref('')
+  const status: Ref<PlayerStatus> = ref('connecting')
   const id = ref('')
   const symbol: Ref<PlayerSymbol> = ref('')
 

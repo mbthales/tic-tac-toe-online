@@ -1,4 +1,5 @@
 export type PlayerStatus =
+  | 'connecting'
   | 'connected'
   | 'searching'
   | 'playing'
