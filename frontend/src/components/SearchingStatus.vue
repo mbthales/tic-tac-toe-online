@@ -65,19 +65,25 @@
 
 <template>
   <div v-if="status === 'searching'" class="flex flex-col items-center gap-2">
-    <p class="text-albescent-white-950 font-sora text-lg font-medium">
+    <p
+      class="text-albescent-white-950 font-sora text-sm font-medium sm:text-lg"
+    >
       Searching for opponent...
     </p>
-    <p class="font-sora text-sm text-gray-500">{{ timeSearching }}s</p>
+    <p class="font-sora text-xs text-gray-500 sm:text-sm">
+      {{ timeSearching }}s
+    </p>
   </div>
   <div
     v-else-if="status === 'playing'"
     class="flex flex-col items-center gap-2"
   >
-    <p class="text-albescent-white-950 font-sora text-xl font-bold">
+    <p
+      class="text-albescent-white-950 font-sora text-base font-bold sm:text-xl"
+    >
       Match found. You are playing as {{ symbol }}.
     </p>
-    <p v-if="timeMatchReady" class="font-sora text-sm text-gray-500">
+    <p v-if="timeMatchReady" class="font-sora text-xs text-gray-500 sm:text-sm">
       Starting in {{ timeMatchReady }}s
     </p>
   </div>

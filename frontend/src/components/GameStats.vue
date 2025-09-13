@@ -12,7 +12,7 @@
     try {
       stats.value = await getStats()
     } catch (err) {
-      console.error('Erro ao buscar stats:', err)
+      console.error('Error getting stats:', err)
     }
   }
 
@@ -32,7 +32,7 @@
 <template>
   <div
     v-if="stats"
-    class="font-sora absolute top-5 right-5 flex gap-10 text-gray-500"
+    class="font-sora absolute top-5 left-1/2 flex w-full -translate-x-1/2 transform justify-center gap-10 text-xs text-gray-500 sm:right-5 sm:left-auto sm:w-auto sm:translate-x-0 sm:justify-start sm:text-base"
   >
     <p>Players Connected: {{ stats.playersConnected }}</p>
     <p>Players Searching: {{ stats.playersSearching }}</p>

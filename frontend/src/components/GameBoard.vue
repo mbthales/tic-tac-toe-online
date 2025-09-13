@@ -35,7 +35,9 @@
   <div
     class="text-albescent-white-950 font-sora flex flex-col items-center gap-4"
   >
-    <p class="text-xl">It's {{ isMyTurn ? 'your' : "opponent's" }} turn.</p>
+    <p class="text-base sm:text-xl">
+      It's {{ isMyTurn ? 'your' : "opponent's" }} turn
+    </p>
     <div class="flex justify-center gap-4">
       <div v-for="col in 3" :key="col" class="flex flex-col gap-2">
         <div
@@ -55,7 +57,7 @@
   @reference "../style.css";
 
   .game-cell {
-    @apply border-albescent-white-500 flex h-[200px] w-[200px] items-center justify-center border-2 text-4xl font-bold transition-all duration-100;
+    @apply border-albescent-white-500 flex h-[80px] w-[80px] items-center justify-center border-2 text-xl font-bold transition-all duration-100 sm:h-[200px] sm:w-[200px] sm:text-4xl;
   }
 
   .game-cell--interactive {
