@@ -1,7 +1,10 @@
 import type { BodyInit } from 'bun'
 
 export const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin':
+    process.env.NODE_ENV === 'production'
+      ? process.env.FRONTEND_URL || ''
+      : '*',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
   'Access-Control-Allow-Headers':
     'Content-Type, Authorization, X-Requested-With',
